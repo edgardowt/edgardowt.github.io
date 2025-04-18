@@ -3,72 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facial Action Coding System</title>
+    <title>Facial Action Coding System (FACS)</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        h1, h2, h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
             color: #333;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
+            max-width: 1000px;
+            margin: 0 auto;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
         }
-        ul {
-            list-style-type: none;
-            padding: 0;
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
         }
-        li {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+        
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
         }
-        .highlight {
+        
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+        }
+        
+        .section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .au-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .au-item {
+            background-color: var(--light-color);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .au-number {
             font-weight: bold;
-            color: #007bff;
+            color: var(--primary-color);
+        }
+        
+        .au-name {
+            font-style: italic;
+        }
+        
+        .au-muscle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .combined {
+            border-left-color: #e67e22;
+        }
+        
+        .special {
+            border-left-color: var(--dark-color);
+        }
+        
+        .notes {
+            background-color: #f1f9fe;
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .source {
+            font-size: 0.9rem;
+            text-align: right;
+            margin-top: 2rem;
+            color: #666;
+        }
+        
+        .emoji {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 600px) {
+            .au-list {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Facial Action Coding System</h1>
-        <p>El Facial Action Coding System (FACS) es un sistema que clasifica movimientos faciales según la activación de músculos específicos.</p>
+    <header>
+        <h1>Facial Action Coding System (FACS)</h1>
+        <p>Cada UA (Unidad de Acción) corresponde a la activación de uno o más músculos faciales. Algunas son combinatorias.</p>
+    </header>
+    
+    <div class="section">
+        <h2><span class="emoji">🔵</span> Unidades de Acción Individuales (AUs Simples)</h2>
+        <div class="au-list">
+            <div class="au-item">
+                <p><span class="au-number">UA1</span> <span class="au-name">(Inner Brow Raiser)</span> - Elevación ceja interna</p>
+                <p class="au-muscle">Músculo: frontalis, porción medial</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA2</span> <span class="au-name">(Outer Brow Raiser)</span> - Elevación ceja externa</p>
+                <p class="au-muscle">Músculo: frontalis, porción lateral</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA4</span> <span class="au-name">(Brow Lowerer)</span> - Ceño fruncido</p>
+                <p class="au-muscle">Músculo: corrugator supercilii/depressor supercilii</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA5</span> <span class="au-name">(Upper Lid Raiser)</span> - Elevación párpado superior</p>
+                <p class="au-muscle">Músculo: levator palpebrae superioris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA6</span> <span class="au-name">(Cheek Raiser)</span> - Arrugamiento alrededor de ojos</p>
+                <p class="au-muscle">Músculo: orbicularis oculi, porción orbital</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA7</span> <span class="au-name">(Lid Tightener)</span> - Apretar párpados</p>
+                <p class="au-muscle">Músculo: orbicularis oculi, porción palpebral</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA9</span> <span class="au-name">(Nose Wrinkler)</span> - Arrugar nariz</p>
+                <p class="au-muscle">Músculo: levator labii superioris alaeque nasi</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA10</span> <span class="au-name">(Upper Lip Raiser)</span> - Elevar labio superior</p>
+                <p class="au-muscle">Músculo: levator labii superioris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA11</span> <span class="au-name">(Nasolabial Deepener)</span> - Surco nasolabial marcado</p>
+                <p class="au-muscle">Músculo: zygomaticus minor</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA12</span> <span class="au-name">(Lip Corner Puller)</span> - Sonrisa</p>
+                <p class="au-muscle">Músculo: zygomaticus major</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA13</span> <span class="au-name">(Sharp Lip Puller)</span> - Sonrisa "afilada"</p>
+                <p class="au-muscle">Músculo: caninus</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA14</span> <span class="au-name">(Dimpler)</span> - Hoyuelo en mejilla</p>
+                <p class="au-muscle">Músculo: buccinator</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA15</span> <span class="au-name">(Lip Corner Depressor)</span> - Esquina labios hacia abajo</p>
+                <p class="au-muscle">Músculo: depressor anguli oris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA16</span> <span class="au-name">(Lower Lip Depressor)</span> - Labio inferior hacia abajo</p>
+                <p class="au-muscle">Músculo: depressor labii inferioris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA17</span> <span class="au-name">(Chin Raiser)</span> - Elevar barbilla</p>
+                <p class="au-muscle">Músculo: mentalis</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA18</span> <span class="au-name">(Lip Pucker)</span> - Fruncir labios</p>
+                <p class="au-muscle">Músculo: incisivii labii</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA20</span> <span class="au-name">(Lip Stretcher)</span> - Estirar labios horizontalmente</p>
+                <p class="au-muscle">Músculo: risorius</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA22</span> <span class="au-name">(Lip Funneler)</span> - Labios en forma de embudo</p>
+                <p class="au-muscle">Músculo: orbicularis oris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA23</span> <span class="au-name">(Lip Tightener)</span> - Apretar labios</p>
+                <p class="au-muscle">Músculo: orbicularis oris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA24</span> <span class="au-name">(Lip Pressor)</span> - Presionar labios</p>
+                <p class="au-muscle">Músculo: orbicularis oris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA25</span> <span class="au-name">(Lips Part)</span> - Separación labios</p>
+                <p class="au-muscle">Relajación orbicularis oris</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA26</span> <span class="au-name">(Jaw Drop)</span> - Mandíbula hacia abajo</p>
+                <p class="au-muscle">Músculo: masseter</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA27</span> <span class="au-name">(Mouth Stretch)</span> - Boca estirada</p>
+                <p class="au-muscle">Músculo: pterygoids/digastric</p>
+            </div>
+            
+            <div class="au-item">
+                <p><span class="au-number">UA28</span> <span class="au-name">(Lip Suck)</span> - Labios succionados hacia dentro</p>
+                <p class="au-muscle">Músculo: orbicularis oris</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2><span class="emoji">🟠</span> Unidades de Acción Combinadas (AUs Compuestas)</h2>
+        <div class="au-list">
+            <div class="au-item combined">
+                <p><span class="au-number">UA1+2</span> <span class="au-name">(Brow Raiser)</span> - Ambas cejas elevadas</p>
+                <p class="au-muscle">Expresión: sorpresa</p>
+            </div>
+            
+            <div class="au-item combined">
+                <p><span class="au-number">UA6+12</span> <span class="au-name">(Duchenne Smile)</span> - Sonrisa genuina</p>
+                <p class="au-muscle">Comisuras + arrugas ojos</p>
+            </div>
+            
+            <div class="au-item combined">
+                <p><span class="au-number">UA4+7</span> <span class="au-name">(Brow Narrowing)</span> - Ceño + párpados apretados</p>
+                <p class="au-muscle">Expresión: enojo intenso</p>
+            </div>
+            
+            <div class="au-item combined">
+                <p><span class="au-number">UA9+15+17</span> <span class="au-name">(Disgust)</span> - Nariz arrugada + boca hacia abajo</p>
+                <p class="au-muscle">Expresión: asco</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2><span class="emoji">⚫</span> Otras Codificaciones Especiales</h2>
+        <div class="au-list">
+            <div class="au-item special">
+                <p><span class="au-number">AD19</span> <span class="au-name">(Tongue Show)</span> - Mostrar lengua</p>
+            </div>
+            
+            <div class="au-item special">
+                <p><span class="au-number">AD29</span> <span class="au-name">(Jaw Thrust)</span> - Mandíbula hacia adelante</p>
+            </div>
+            
+            <div class="au-item special">
+                <p><span class="au-number">M51/52/55/56</span> <span class="au-name">(Head Movements)</span> - Movimientos de cabeza</p>
+                <p class="au-muscle">Ej.: giro, inclinación</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section notes">
+        <h2><span class="emoji">📌</span> Notas Clave</h2>
+        <h3>Intensidad</h3>
+        <p>Cada UA tiene una escala de A (leve) a E (extrema) (ej.: UA12C = sonrisa moderada).</p>
         
-        <h2>🔵 Unidades de Acción Individuales (AUs Simples)</h2>
+        <h3>Asimetría</h3>
+        <p>Se anota con "L" (left) o "R" (right) (ej.: UA12R = sonrisa más marcada en lado derecho).</p>
+        
+        <h3>Emociones básicas</h3>
         <ul>
-            <li><span class="highlight">UA1</span> – Elevación ceja interna (frontalis, porción medial)</li>
-            <li><span class="highlight">UA2</span> – Elevación ceja externa (frontalis, porción lateral)</li>
-            <li><span class="highlight">UA4</span> – Ceño fruncido (corrugator supercilii/depressor supercilii)</li>
-            <li><span class="highlight">UA5</span> – Elevación párpado superior (levator palpebrae superioris)</li>
+            <li><strong>Alegría:</strong> UA6 + UA12</li>
+            <li><strong>Tristeza:</strong> UA1 + UA4 + UA15</li>
+            <li><strong>Enojo:</strong> UA4 + UA5 + UA7 + UA23</li>
         </ul>
-
-        <h2>🟠 Unidades de Acción Combinadas (AUs Compuestas)</h2>
-        <ul>
-            <li><span class="highlight">UA1+2</span> – Ambas cejas elevadas (sorpresa)</li>
-            <li><span class="highlight">UA6+12</span> – Sonrisa genuina (Duchenne Smile)</li>
-            <li><span class="highlight">UA4+7</span> – Ceño + párpados apretados (enojo intenso)</li>
-        </ul>
-
-        <h2>⚫ Otras Codificaciones Especiales</h2>
-        <ul>
-            <li><span class="highlight">AD19</span> – Mostrar lengua</li>
-            <li><span class="highlight">AD29</span> – Mandíbula hacia adelante</li>
-        </ul>
-
-        <h2>📌 Notas Clave</h2>
-        <ul>
-            <li><span class="highlight">Intensidad:</span> Cada UA tiene una escala de A (leve) a E (extrema).</li>
-            <li><span class="highlight">Asimetría:</span> Se anota con "L" (left) o "R" (right).</li>
-        </ul>
-
-        <h2>📚 Fuente Oficial</h2>
-        <p>Ekman, P., Friesen, W. V., & Hager, J. C. (2002). Facial Action Coding System (FACS): Manual.</p>
+    </div>
+    
+    <div class="source">
+        <h3>📚 Fuente oficial</h3>
+        <p>Ekman, P., Friesen, W. V., & Hager, J. C. (2002). <em>Facial Action Coding System (FACS): Manual.</em> Research Nexus.</p>
     </div>
 </body>
 </html>
