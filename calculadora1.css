@@ -1,0 +1,257 @@
+/* Simple Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+#bondCalculatorForm {
+    max-width: 750px;
+    margin: 20px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+h1, h2, legend {
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #0056b3;
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 5px;
+    background-color: #fdfdfd;
+}
+
+legend {
+    padding: 0 10px;
+    font-weight: bold;
+    color: #555;
+    font-size: 1.1em;
+}
+
+/* Layout para campos dentro de fieldsets */
+fieldset div {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Para mejor responsividad */
+}
+
+fieldset div label {
+    width: 220px; /* Ancho fijo para labels */
+    margin-right: 10px;
+    text-align: right;
+    font-weight: 500;
+    flex-shrink: 0; /* Evita que el label se encoja */
+}
+
+fieldset div input[type="date"],
+fieldset div input[type="number"] {
+    flex-grow: 1; /* Input ocupa espacio restante */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 150px; /* Ancho mínimo */
+}
+
+/* Estilización de Elementos de Formulario */
+input[type="date"],
+input[type="number"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#calculateBtn {
+    display: block; /* Hacer que ocupe todo el ancho */
+    width: 100%;
+    margin-top: 20px;
+    font-size: 1.1em;
+    background-color: #17a2b8;
+}
+#calculateBtn:hover {
+    background-color: #117a8b;
+}
+
+
+#addPurchaseBtn {
+    background-color: #28a745; /* Verde para añadir */
+    margin-bottom: 15px;
+}
+#addPurchaseBtn:hover {
+    background-color: #218838;
+}
+
+.removePurchaseBtn {
+    background-color: #dc3545; /* Rojo para eliminar */
+    padding: 6px 12px;
+    font-size: 0.9em;
+    margin: 0;
+}
+.removePurchaseBtn:hover {
+    background-color: #c82333;
+}
+
+/* Estilización de la Tabla */
+#purchaseTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+#purchaseTable th,
+#purchaseTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#purchaseTable th {
+    background-color: #e9ecef;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#purchaseTable td input {
+    width: 95%; /* Ajustar ancho dentro de la celda */
+    padding: 8px;
+}
+
+#purchaseTable td:last-child { /* Celda del botón Eliminar */
+    text-align: center;
+}
+
+/* Estilización del Área de Resultados */
+#resultsArea {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #e9f5ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 5px;
+}
+
+#resultsArea h2 {
+    margin-bottom: 10px;
+    color: #0056b3;
+}
+
+#resultsArea p {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+#resultsArea strong {
+    font-weight: bold;
+    color: #004085;
+    margin-left: 5px;
+}
+
+/* Área de Mensajes */
+#messageArea {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
+}
+
+#messageArea.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+#messageArea.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+/* Responsividad */
+@media (max-width: 700px) {
+    fieldset div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    fieldset div label {
+        width: auto;
+        margin-bottom: 5px;
+        text-align: left;
+        margin-right: 0;
+    }
+
+    fieldset div input[type="date"],
+    fieldset div input[type="number"] {
+        width: 100%;
+    }
+
+    #purchaseTable th,
+    #purchaseTable td {
+        font-size: 0.9em;
+        padding: 8px;
+    }
+    #purchaseTable td input {
+        width: 90%;
+    }
+}
+
+@media (max-width: 500px) {
+     h1 {
+        font-size: 1.5em;
+     }
+     button {
+        padding: 10px 15px;
+        font-size: 0.95em;
+     }
+     #purchaseTable th,
+     #purchaseTable td {
+        font-size: 0.85em;
+        padding: 6px;
+     }
+    .removePurchaseBtn {
+        padding: 5px 8px;
+        font-size: 0.8em;
+     }
+}

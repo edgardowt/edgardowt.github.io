@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Rendimiento de Bonos (TNA/TEA)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form id="bondCalculatorForm">
+        <h1>Calculadora de Rendimiento de Bonos</h1>
+
+        <fieldset>
+            <legend>Datos de Vencimiento</legend>
+            <div>
+                <label for="maturityDate">Fecha de Vencimiento:</label>
+                <input type="date" id="maturityDate" name="maturityDate" required>
+            </div>
+            <div>
+                <label for="finalValue">Valor de Pago Unitario al Vencimiento:</label>
+                <input type="number" id="finalValue" name="finalValue" step="any" min="0.01" required>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Datos de Compra</legend>
+            <table id="purchaseTable">
+                <thead>
+                    <tr>
+                        <th>Fecha de Compra</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="purchaseTableBody">
+                    <tr class="purchaseRowTemplate" style="display: none;">
+                         <td><input type="date" name="purchaseDate" required></td>
+                         <td><input type="number" name="purchaseQty" min="1" step="1" required></td>
+                         <td><input type="number" name="purchasePrice" step="any" min="0.01" required></td>
+                         <td><button type="button" class="removePurchaseBtn">Eliminar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" id="addPurchaseBtn">Agregar Compra</button>
+        </fieldset>
+
+        <button type="button" id="calculateBtn">Calcular Rendimientos</button>
+
+        <div id="resultsArea">
+            <h2>Resultados</h2>
+            <p>Tasa Nominal Anual (TNA): <strong id="tnaResult">--</strong> %</p>
+            <p>Tasa Efectiva Anual (TEA): <strong id="teaResult">--</strong> %</p>
+        </div>
+
+        <div id="messageArea"></div>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
