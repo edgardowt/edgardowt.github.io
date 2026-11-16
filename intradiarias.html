@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operaciones intradiarias</title>
+<style>
+  :root {
+    --azul: #156082;
+    --banda: #eaf4fa;
+    --borde: #c9d6de;
+    --verde: #006100;
+    --rojo: #9c0006;
+    --gris: #5b6770;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, sans-serif;
+    color: #111;
+    background: #fff;
+    margin: 16px;
+    font-size: 13px;
+  }
+  h1 { font-size: 1.4em; margin: 0 0 4px; }
+  h2 { font-size: 1.05em; margin: 22px 0 8px; }
+  p.nota { color: var(--gris); margin: 4px 0; max-width: 900px; line-height: 1.4; }
+  .barra { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+  button {
+    font: inherit;
+    border: 1px solid var(--azul);
+    background: #fff;
+    color: var(--azul);
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button.principal { background: var(--azul); color: #fff; }
+  button:hover { opacity: .85; }
+  .envoltorio { overflow-x: auto; border: 1px solid var(--borde); border-radius: 4px; }
+  table { border-collapse: collapse; width: max-content; min-width: 100%; }
+  th {
+    background: var(--azul);
+    color: #fff;
+    font-weight: bold;
+    padding: 6px 6px;
+    text-align: right;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+  th.izq, td.izq { text-align: left; }
+  td {
+    padding: 3px 6px;
+    text-align: right;
+    white-space: nowrap;
+    border-bottom: 1px solid #eef2f5;
+    font-variant-numeric: tabular-nums;
+  }
+  tbody tr:nth-child(odd) td { background: var(--banda); }
+  td input, td select {
+    font: inherit;
+    border: 1px solid var(--borde);
+    border-radius: 3px;
+    padding: 3px 5px;
+    background: #fff;
+  }
+  td input.num { width: 74px; text-align: right; }
+  td input.q { width: 52px; }
+  td input.tick { width: 64px; }
+  td select { max-width: 128px; }
+  td.mini { font-weight: bold; }
+  .pos { color: var(--verde); }
+  .neg { color: var(--rojo); }
+  .sep { border-left: 2px solid var(--borde); }
+  td.acc button { padding: 1px 7px; border-color: #bbb; color: #555; }
+  tfoot td { font-weight: bold; background: #f4f6f8; border-top: 2px solid var(--borde); }
+  #params td input { width: 80px; text-align: right; }
+  #params { min-width: 0; }
+  .ayuda { color: var(--gris); font-size: 12px; }
+  body.sin-detalle .det { display: none; }
+  label.chk { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+</style>
+</head>
+<body class="sin-detalle">
+
+<h1>Operaciones intradiarias</h1>
+<p class="nota">Calcula el neto de una compra, el precio mínimo de venta para no perder y la ganancia si vendés a la cotización indicada, con aranceles, derechos de mercado e IVA de cada broker.</p>
+<p class="nota">Las operaciones que cargues se guardan solo en este navegador (no se envían a ningún lado ni se sincronizan con la planilla de Google Sheets). Para llevarlas a otra computadora, usá Exportar CSV.</p>
+
+<h2>Operaciones</h2>
+<div class="barra">
+  <button class="principal" id="btnAgregar">+ Agregar operación</button>
+  <button id="btnExportar">Exportar CSV</button>
+  <button id="btnImportar">Importar CSV</button>
+  <input type="file" id="archivo" accept=".csv,text/csv" hidden>
+  <button id="btnBorrarTodo">Borrar todas</button>
+  <label class="chk"><input type="checkbox" id="chkDetalle"> Mostrar arancel, derechos e IVA</label>
+  <span class="ayuda">Precios y cantidades con coma o punto decimal (812,5 o 812.5).</span>
+</div>
+
+<div class="envoltorio">
+<table id="ops">
+  <thead>
+    <tr>
+      <th class="izq">Broker</th>
+      <th class="izq">Especie</th>
+      <th class="izq">Ticket</th>
+      <th>q</th>
+      <th>Pcio</th>
+      <th>Cotiz</th>
+      <th class="sep">Bruto</th>
+      <th class="det">Aran</th>
+      <th class="det">Merc</th>
+      <th class="det">IVA</th>
+      <th>Neto</th>
+      <th>Pcio Neto</th>
+      <th class="sep det">Aran V</th>
+      <th class="det">Merc V</th>
+      <th class="det">IVA V</th>
+      <th class="sep">Bruto V</th>
+      <th>Mini Unit Vta</th>
+      <th class="sep">Gcia Unit</th>
+      <th>Gcia Tot</th>
+      <th>% neto</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+  <tfoot>
+    <tr>
+      <td class="izq" id="pieTxt" colspan="12">Ganancia total de las operaciones con cotización</td>
+      <td id="totGcia"></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+
+<h2>Parámetros</h2>
+<p class="nota">Arancel, derechos de mercado e IVA por broker y tipo de especie. Se pueden editar; el cambio queda guardado en este navegador.</p>
+<div class="barra"><button id="btnParamDefecto">Restablecer valores</button></div>
+<div class="envoltorio" style="display:inline-block">
+<table id="params">
+  <thead>
+    <tr><th class="izq">Broker</th><th class="izq">Especie</th><th>Arancel %</th><th>Derechos %</th><th>IVA %</th><th>Costo por lado completo</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+<p class="nota">Fuentes: tarifario de Eco Valores (no asesorado), documento de BYMA de derechos de mercado (abril 2026) y boletos reales de ambos brokers, verificados el 15/11/2026.</p>
+<p class="nota">Santander no cobra arancel; en ONs y títulos públicos tampoco cobra derechos de mercado. ONs, bonos y letras no pagan IVA.</p>
+<p class="nota">Bonificación intradiaria de Eco: en una compra y una venta del mismo día, misma moneda y plazo, el arancel se paga solo del lado de menor monto. Los derechos de mercado se pagan siempre en los dos lados. Sin cotización, el arancel se cobra en la compra.</p>
+<p class="nota">% neto = Gcia Unit / Pcio Neto, ya descontado el costo de vender.</p>
+
+<script>
+(function () {
+  'use strict';
+
+  var CLAVE_OPS = 'intradiarias_ops_v1';
+  var CLAVE_PAR = 'intradiarias_params_v1';
+  var BROKERS = ['SANT', 'ECO'];
+  var ESPECIES = ['ACC/CEDE', 'Bonos/Letras/ONs'];
+  var PARAMS_DEFECTO = {
+    'SANT|ACC/CEDE':         { ar: 0,      der: 0.0005, iva: 0.21 },
+    'SANT|Bonos/Letras/ONs': { ar: 0,      der: 0,      iva: 0 },
+    'ECO|ACC/CEDE':          { ar: 0.0033, der: 0.0005, iva: 0.21 },
+    'ECO|Bonos/Letras/ONs':  { ar: 0.0049, der: 0.0001, iva: 0 }
+  };
+
+  function leer(clave, porDefecto) {
+    try {
+      var v = localStorage.getItem(clave);
+      return v ? JSON.parse(v) : porDefecto;
+    } catch (e) { return porDefecto; }
+  }
+  function guardar(clave, valor) {
+    try { localStorage.setItem(clave, JSON.stringify(valor)); } catch (e) { /* sin almacenamiento */ }
+  }
+  function copia(o) { return JSON.parse(JSON.stringify(o)); }
+
+  var params = leer(CLAVE_PAR, copia(PARAMS_DEFECTO));
+  var ops = leer(CLAVE_OPS, []);
+  if (!ops.length) ops.push(nuevaOp());
+
+  function nuevaOp(base) {
+    return {
+      broker: base ? base.broker : 'SANT',
+      especie: base ? base.especie : 'ACC/CEDE',
+      ticket: '', q: '', pcio: '', cotiz: ''
+    };
+  }
+
+  /* ---------- números ---------- */
+  function aNumero(txt) {
+    if (txt === null || txt === undefined) return null;
+    var s = String(txt).trim().replace(/\s|\$/g, '');
+    if (s === '') return null;
+    if (s.indexOf(',') >= 0) {
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else if ((s.match(/\./g) || []).length > 1) {
+      s = s.replace(/\./g, '');
+    }
+    var n = Number(s);
+    return isFinite(n) ? n : null;
+  }
+  var fmt2 = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var fmt3 = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  function pesos(n, tres) { return (n === null || !isFinite(n)) ? '' : (n < 0 ? '-$ ' : '$ ') + (tres ? fmt3 : fmt2).format(Math.abs(n)); }
+  function pct(n, dec) {
+    if (n === null || !isFinite(n)) return '';
+    return new Intl.NumberFormat('es-AR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n * 100) + '%';
+  }
+
+  /* ---------- cálculo (mismas fórmulas que la planilla) ---------- */
+  function calcular(op) {
+    var p = params[op.broker + '|' + op.especie] || { ar: 0, der: 0, iva: 0 };
+    var q = aNumero(op.q), pc = aNumero(op.pcio), co = aNumero(op.cotiz);
+    if (co === 0) co = null;
+    var r = { ar: 0, der: p.der, iva: p.iva, arV: 0 };
+    if (co === null || (pc !== null && pc <= co)) r.ar = p.ar;
+    if (co !== null && pc !== null && pc > co) r.arV = p.ar;
+    if (q === null || pc === null || q === 0) return r;
+
+    var costoC = (r.ar + p.der) * (1 + p.iva);
+    var costoV = (r.arV + p.der) * (1 + p.iva);
+    r.bruto = q * pc;
+    r.neto = r.bruto * (1 + costoC);
+    r.pNeto = r.neto / q;
+    r.brutoV = r.neto / (1 - costoV);
+    r.miniV = r.brutoV / q;
+    if (co !== null) {
+      r.gUnit = co * (1 - costoV) - r.pNeto;
+      r.gTot = r.gUnit * q;
+      r.pctNeto = r.gUnit / r.pNeto;
+    }
+    return r;
+  }
+
+  /* ---------- tabla de operaciones ---------- */
+  var cuerpo = document.querySelector('#ops tbody');
+
+  function celda(tr, contenido, clase) {
+    var td = document.createElement('td');
+    if (clase) td.className = clase;
+    if (contenido instanceof Node) td.appendChild(contenido); else td.textContent = contenido;
+    tr.appendChild(td);
+    return td;
+  }
+  function selector(opciones, valor, alCambiar) {
+    var s = document.createElement('select');
+    opciones.forEach(function (o) {
+      var op = document.createElement('option');
+      op.value = o; op.textContent = o; if (o === valor) op.selected = true;
+      s.appendChild(op);
+    });
+    s.addEventListener('change', function () { alCambiar(s.value); });
+    return s;
+  }
+  function entrada(valor, clase, alCambiar) {
+    var i = document.createElement('input');
+    i.type = 'text'; i.value = valor; i.className = clase;
+    if (clase.indexOf('num') === 0) i.inputMode = 'decimal';
+    i.addEventListener('input', function () { alCambiar(i.value); });
+    return i;
+  }
+  function signo(td, n) {
+    td.classList.remove('pos', 'neg');
+    if (n > 0) td.classList.add('pos'); else if (n < 0) td.classList.add('neg');
+  }
+
+  function dibujar() {
+    cuerpo.innerHTML = '';
+    ops.forEach(function (op, idx) {
+      var tr = document.createElement('tr');
+      var calcTds = [];
+      function actualizar() {
+        var r = calcular(op);
+        var vals = [
+          pesos(r.bruto), pct(r.ar, 2), pct(r.der, 2), pct(r.iva, 0), pesos(r.neto), pesos(r.pNeto),
+          pct(r.arV, 2), pct(r.der, 2), pct(r.iva, 0), pesos(r.brutoV), pesos(r.miniV, true),
+          pesos(r.gUnit), pesos(r.gTot), pct(r.pctNeto, 3)
+        ];
+        vals.forEach(function (v, k) { calcTds[k].textContent = v; });
+        signo(calcTds[11], r.gUnit); signo(calcTds[12], r.gTot); signo(calcTds[13], r.pctNeto);
+        guardar(CLAVE_OPS, ops);
+        totales();
+      }
+      celda(tr, selector(BROKERS, op.broker, function (v) { op.broker = v; actualizar(); }), 'izq');
+      celda(tr, selector(ESPECIES, op.especie, function (v) { op.especie = v; actualizar(); }), 'izq');
+      celda(tr, entrada(op.ticket, 'tick', function (v) { op.ticket = v; guardar(CLAVE_OPS, ops); }), 'izq');
+      celda(tr, entrada(op.q, 'num q', function (v) { op.q = v; actualizar(); }));
+      celda(tr, entrada(op.pcio, 'num', function (v) { op.pcio = v; actualizar(); }));
+      celda(tr, entrada(op.cotiz, 'num', function (v) { op.cotiz = v; actualizar(); }));
+      var clases = ['sep', 'det', 'det', 'det', '', '', 'sep det', 'det', 'det', 'sep', 'mini', 'sep', '', ''];
+      clases.forEach(function (c) { calcTds.push(celda(tr, '', c)); });
+      var acc = document.createElement('span');
+      var bDup = document.createElement('button'); bDup.textContent = '⧉'; bDup.title = 'Duplicar';
+      bDup.addEventListener('click', function () { var n = copia(op); ops.splice(idx + 1, 0, n); guardar(CLAVE_OPS, ops); dibujar(); });
+      var bDel = document.createElement('button'); bDel.textContent = '✕'; bDel.title = 'Eliminar';
+      bDel.addEventListener('click', function () { ops.splice(idx, 1); if (!ops.length) ops.push(nuevaOp()); guardar(CLAVE_OPS, ops); dibujar(); });
+      acc.appendChild(bDup); acc.appendChild(document.createTextNode(' ')); acc.appendChild(bDel);
+      celda(tr, acc, 'acc');
+      cuerpo.appendChild(tr);
+      actualizar();
+    });
+    totales();
+  }
+
+  function totales() {
+    var t = 0, hay = false;
+    ops.forEach(function (op) { var r = calcular(op); if (r.gTot !== undefined) { t += r.gTot; hay = true; } });
+    var td = document.getElementById('totGcia');
+    td.textContent = hay ? pesos(t) : '';
+    signo(td, hay ? t : 0);
+  }
+
+  /* ---------- parámetros ---------- */
+  var cuerpoPar = document.querySelector('#params tbody');
+  function dibujarParams() {
+    cuerpoPar.innerHTML = '';
+    BROKERS.forEach(function (b) {
+      ESPECIES.forEach(function (e) {
+        var k = b + '|' + e, p = params[k];
+        var tr = document.createElement('tr');
+        celda(tr, b, 'izq'); celda(tr, e, 'izq');
+        var tdTot;
+        function refrescarTot() { tdTot.textContent = pct((p.ar + p.der) * (1 + p.iva), 4); }
+        [['ar', 2], ['der', 2], ['iva', 0]].forEach(function (par) {
+          var i = document.createElement('input');
+          i.type = 'text'; i.inputMode = 'decimal';
+          i.value = String(+(p[par[0]] * 100).toFixed(4)).replace('.', ',');
+          i.addEventListener('input', function () {
+            var n = aNumero(i.value);
+            if (n === null) return;
+            p[par[0]] = n / 100;
+            guardar(CLAVE_PAR, params);
+            refrescarTot();
+            dibujar();
+          });
+          celda(tr, i);
+        });
+        tdTot = celda(tr, '');
+        refrescarTot();
+        cuerpoPar.appendChild(tr);
+      });
+    });
+  }
+
+  /* ---------- CSV ---------- */
+  var COLS = ['broker', 'especie', 'ticket', 'q', 'pcio', 'cotiz'];
+  function exportar() {
+    var lineas = ['Broker;Especie;Ticket;q;Pcio;Cotiz'];
+    ops.forEach(function (op) {
+      lineas.push(COLS.map(function (c) { return String(op[c] || '').replace(/;/g, ' '); }).join(';'));
+    });
+    var blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'intradiarias_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function importar(texto) {
+    var filas = texto.replace(/^﻿/, '').split(/\r?\n/).filter(function (l) { return l.trim() !== ''; });
+    if (!filas.length) return;
+    var sep = filas[0].indexOf(';') >= 0 ? ';' : (filas[0].indexOf('\t') >= 0 ? '\t' : ',');
+    if (/broker/i.test(filas[0])) filas.shift();
+    function partir(l) {
+      var out = [], cur = '', q = false;
+      for (var i = 0; i < l.length; i++) {
+        var ch = l[i];
+        if (ch === '"') { if (q && l[i + 1] === '"') { cur += '"'; i++; } else q = !q; }
+        else if (ch === sep && !q) { out.push(cur); cur = ''; }
+        else cur += ch;
+      }
+      out.push(cur);
+      return out;
+    }
+    var nuevas = filas.map(function (l) {
+      var c = partir(l);
+      var b = (c[0] || '').trim().toUpperCase(), e = (c[1] || '').trim();
+      return {
+        broker: BROKERS.indexOf(b) >= 0 ? b : 'SANT',
+        especie: ESPECIES.indexOf(e) >= 0 ? e : (/bono|on|letra/i.test(e) ? 'Bonos/Letras/ONs' : 'ACC/CEDE'),
+        ticket: (c[2] || '').trim(), q: (c[3] || '').trim(), pcio: (c[4] || '').trim(), cotiz: (c[5] || '').trim()
+      };
+    });
+    nuevas = nuevas.filter(function (o) { return o.q || o.pcio || o.ticket; });
+    if (nuevas.length) { ops = ops.filter(function (o) { return o.q || o.pcio || o.cotiz || o.ticket; }).concat(nuevas); guardar(CLAVE_OPS, ops); dibujar(); }
+  }
+
+  document.getElementById('btnAgregar').addEventListener('click', function () {
+    ops.push(nuevaOp(ops[ops.length - 1])); guardar(CLAVE_OPS, ops); dibujar();
+    var ins = cuerpo.querySelectorAll('tr:last-child input');
+    if (ins.length) ins[0].focus();
+  });
+  document.getElementById('btnExportar').addEventListener('click', exportar);
+  document.getElementById('btnImportar').addEventListener('click', function () { document.getElementById('archivo').click(); });
+  document.getElementById('archivo').addEventListener('change', function (ev) {
+    var f = ev.target.files[0]; if (!f) return;
+    var lector = new FileReader();
+    lector.onload = function () { importar(lector.result); ev.target.value = ''; };
+    lector.readAsText(f);
+  });
+  document.getElementById('btnBorrarTodo').addEventListener('click', function () {
+    ops = [nuevaOp()]; guardar(CLAVE_OPS, ops); dibujar();
+  });
+  document.getElementById('btnParamDefecto').addEventListener('click', function () {
+    params = copia(PARAMS_DEFECTO); guardar(CLAVE_PAR, params); dibujarParams(); dibujar();
+  });
+
+  var chk = document.getElementById('chkDetalle');
+  function aplicarDetalle() {
+    document.body.classList.toggle('sin-detalle', !chk.checked);
+    document.getElementById('pieTxt').colSpan = chk.checked ? 18 : 12;
+    guardar('intradiarias_detalle_v1', chk.checked);
+  }
+  chk.checked = leer('intradiarias_detalle_v1', false) === true;
+  chk.addEventListener('change', aplicarDetalle);
+  aplicarDetalle();
+
+  dibujarParams();
+  dibujar();
+})();
+</script>
+</body>
+</html>
